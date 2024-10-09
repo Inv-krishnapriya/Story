@@ -46,6 +46,14 @@ Documentation can be found on [Storybook's docs site](https://storybook.js.org/d
 Open [http://localhost:6006](http://localhost:6006) with your browser to see the result.
 
 
+### Resource Details:
+- Added various resources, including links to guides, documentation, video tutorials, and GitHub repositories.
+- Each link provides a specific aspect of Storybook, whether it's learning, extending functionality, or contributing.
+
+Feel free to further customize these resources based on your needs! Let me know if you have any other requests.
+
+
+
 
 
 
