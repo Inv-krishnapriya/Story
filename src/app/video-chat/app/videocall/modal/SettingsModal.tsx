@@ -1,0 +1,503 @@
+import {
+  BackgroundBlurIcon,
+  MegaphoneOutlinedIcon,
+  MicOutlinedIcon,
+  MintButton,
+  MintDialog,
+  MintDialogActions,
+  MintDialogContent,
+  MintDialogTitle,
+  MintSelectField,
+  MintSwitch,
+  MintTypography,
+  VideoOutlinedIcon,
+} from "@/design-system";
+import { Box, useTheme } from "@mui/material";
+import { ICameraVideoTrack, IMicrophoneAudioTrack } from "agora-rtc-react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores/rootReducer";
+import { useDispatch } from "react-redux";
+import { setControls } from "@/stores/videocall/reducer";
+import { useTranslation } from "react-i18next";
+
+interface ISettingsProps {
+  open: boolean;
+  onClose: () => void;
+  audioDevices: MediaDeviceInfo[];
+  videoDevices: MediaDeviceInfo[];
+  audioTrack: IMicrophoneAudioTrack | null;
+  videoTrack: ICameraVideoTrack | null;
+  speakerDevices: MediaDeviceInfo[];
+  selectedAudioDevice: string;
+  selectedVideoDevice: string;
+  selectedSpeakerDevice: string;
+  handleAudioDeviceChange: (e: any) => void;
+  handleVideoDeviceChange: (e: any) => void;
+  handleSpeakerDeviceChange: (e: any) => void;
+  setBackgroundBlur: (videoTrack: ICameraVideoTrack | null) => void;
+  removeBackgroundBlur: (videoTrack: ICameraVideoTrack | null) => void;
+}
+
+const SettingsModal: React.FC<ISettingsProps> = (props) => {
+  const {
+    open,
+    onClose,
+    audioDevices,
+    videoDevices,
+    audioTrack,
+    videoTrack,
+    speakerDevices,
+    selectedAudioDevice,
+    selectedVideoDevice,
+    selectedSpeakerDevice,
+    handleAudioDeviceChange,
+    handleVideoDeviceChange,
+    handleSpeakerDeviceChange,
+    setBackgroundBlur,
+    removeBackgroundBlur,
+  } = props;
+
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const controls = useSelector((state: RootState) => state.videocall.controls);
+  const [isBlur, setIsBlur] = useState<boolean>(false);
+  console.log(videoDevices);
+  const dispatch = useDispatch();
+
+  const availableVideoDevices = videoDevices.map((item) => {
+    return { label: item.label, value: item.deviceId };
+  });
+  const availableAudioDevices = audioDevices.map((item) => {
+    return { label: item.label, value: item.deviceId };
+  });
+
+  const availableSpeakerDevices = speakerDevices.map((item) => {
+    return { label: item.label, value: item.deviceId };
+  });
+
+  useEffect(() => {
+    if (controls.blurStatus && videoTrack) {
+      setIsBlur(true);
+      setBackgroundBlur(videoTrack);
+    }
+    return () => {};
+  }, []);
+
+  const handleBackgroundBlurChange = () => {
+    console.log("Background blur enabled", isBlur);
+    setIsBlur(!isBlur);
+    dispatch(setControls({ blurStatus: !isBlur }));
+    if (!isBlur === true) {
+      console.log("Enabling blur");
+      setBackgroundBlur(videoTrack);
+      setIsBlur(true);
+    } else {
+      console.log("Disabling blur");
+      removeBackgroundBlur(videoTrack);
+      setIsBlur(false);
+    }
+  };
+
+  return (
+    <MintDialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          display: "flex",
+          width: "343px",
+          minWidth: "343px",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: 0,
+          borderRadius: 1,
+        },
+      }}
+      aria-labelledby="settings-dialog"
+      aria-describedby="settings-dialog-description"
+    >
+      <MintDialogTitle
+        sx={{
+          display: "flex",
+          padding: "16px 24px",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: 0,
+          alignSelf: "stretch",
+        }}
+      >
+        <MintTypography
+          sx={{ alignSelf: "stretch" }}
+          size="head-m"
+          weight="500"
+        >
+          {t("settings-modal.title")}
+        </MintTypography>
+      </MintDialogTitle>
+      <MintDialogContent
+        sx={{
+          display: "flex",
+          padding: "8px 24px",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: "16px",
+          alignSelf: "stretch",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            padding: 0,
+            alignItems: "center",
+            gap: "8px",
+            alignSelf: "stretch",
+          }}
+          id="blur"
+        >
+          <Box
+            sx={{
+              display: "flex",
+              height: "32px",
+              padding: 0,
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <BackgroundBlurIcon size={24} />
+          </Box>
+          <Box
+            sx={{
+              minWidth: "265px",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "flex-start",
+              gap: "4px",
+              flex: "8px 0px 0px",
+              justifyContent: "space-between",
+            }}
+            id="section2"
+          >
+            <Box
+              sx={{
+                display: "flex",
+                padding: 0,
+                alignItems: "center",
+                gap: 1,
+              }}
+              id="title"
+            >
+              <MintTypography size="body" weight="400">
+                {t("settings-modal.background-blur")}
+              </MintTypography>
+              <Box
+                sx={{
+                  display: "flex",
+                  padding: 0,
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              ></Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                padding: "4px 8px",
+                alignItems: "center",
+                gap: "8px",
+                alignSelf: "stretch",
+              }}
+            >
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                id="blurControl"
+              >
+                <MintSwitch
+                  size="medium"
+                  checked={isBlur}
+                  onChange={handleBackgroundBlurChange}
+                  inputProps={{ "aria-label": "controlled" }}
+                  disabled={!videoTrack?.enabled}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            width: "295px",
+            height: "1px",
+            background: theme.mint.color.border.low,
+          }}
+        ></Box>
+        <Box
+          sx={{
+            display: "flex",
+            padding: 0,
+            alignItems: "flex-end",
+            gap: "8px",
+            alignSelf: "stretch",
+          }}
+          id="video"
+        >
+          <Box
+            sx={{
+              display: "flex",
+              height: "32px",
+              padding: 0,
+              justifyContent: "center",
+              alignItems: "baseline",
+              gap: "10px",
+            }}
+          >
+            <VideoOutlinedIcon />
+          </Box>
+          <Box
+            sx={{
+              minWidth: "265px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "6px",
+              flex: "8px 0px 0px",
+            }}
+            id="select"
+          >
+            <Box
+              sx={{
+                display: "flex",
+                padding: 0,
+                alignItems: "center",
+                gap: 1,
+              }}
+              id="title"
+            >
+              <MintTypography
+                size="body"
+                weight="400"
+                color={theme.mint.color.text.high}
+              >
+                {t("settings-modal.camera")}
+              </MintTypography>
+              <Box
+                sx={{
+                  display: "flex",
+                  padding: 0,
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              ></Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                alignSelf: "stretch",
+              }}
+            >
+              <MintSelectField
+                options={availableVideoDevices}
+                fullWidth
+                value={selectedVideoDevice}
+                onChange={(e) => handleVideoDeviceChange(e)}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            padding: 0,
+            alignItems: "flex-end",
+            gap: "8px",
+            alignSelf: "stretch",
+          }}
+          id="microphone"
+        >
+          <Box
+            sx={{
+              display: "flex",
+              height: "32px",
+              padding: 0,
+              justifyContent: "center",
+              alignItems: "baseline",
+              gap: "10px",
+            }}
+            id="micIcon"
+          >
+            <MicOutlinedIcon />
+          </Box>
+          <Box
+            sx={{
+              minWidth: "265px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "6px",
+              flex: "8px 0px 0px",
+            }}
+            id="micSelect"
+          >
+            <Box
+              sx={{
+                display: "flex",
+                padding: 0,
+                alignItems: "center",
+                gap: 1,
+              }}
+              id="micTitle"
+            >
+              <MintTypography
+                size="body"
+                weight="400"
+                color={theme.mint.color.text.high}
+              >
+                {t("settings-modal.microphone")}
+              </MintTypography>
+              <Box
+                sx={{
+                  display: "flex",
+                  padding: 0,
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              ></Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                alignSelf: "stretch",
+              }}
+              id="microphoneSelect"
+            >
+              <MintSelectField
+                options={availableAudioDevices}
+                fullWidth
+                value={selectedAudioDevice}
+                onChange={(e) => handleAudioDeviceChange(e)}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            padding: 0,
+            alignItems: "flex-end",
+            gap: "8px",
+            alignSelf: "stretch",
+          }}
+          id="megaPhone"
+        >
+          <Box
+            sx={{
+              display: "flex",
+              height: "32px",
+              padding: 0,
+              justifyContent: "center",
+              alignItems: "baseline",
+              gap: "10px",
+            }}
+            id="megaPhoneIcon"
+          >
+            <MegaphoneOutlinedIcon />
+          </Box>
+          <Box
+            sx={{
+              minWidth: "265px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "6px",
+              flex: "8px 0px 0px",
+            }}
+            id="megaPhoneSelect"
+          >
+            <Box
+              sx={{
+                display: "flex",
+                padding: 0,
+                alignItems: "center",
+                gap: 1,
+              }}
+              id="megaPhoneTitle"
+            >
+              <MintTypography
+                size="body"
+                weight="400"
+                color={theme.mint.color.text.high}
+              >
+                {t("settings-modal.speaker")}
+              </MintTypography>
+              <Box
+                sx={{
+                  display: "flex",
+                  padding: 0,
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              ></Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                alignSelf: "stretch",
+              }}
+              id="megaPhoneField"
+            >
+              <MintSelectField
+                options={availableSpeakerDevices}
+                fullWidth
+                value={selectedSpeakerDevice}
+                onChange={(e) => handleSpeakerDeviceChange(e)}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </MintDialogContent>
+      <MintDialogActions
+        sx={{
+          display: "flex",
+          padding: "16px",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "8px",
+          alignSelf: "stretch",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            padding: 0,
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "8px",
+            flex: "8px 0px 0px",
+          }}
+        >
+          <MintButton
+            sx={{
+              display: "flex",
+              height: "40px",
+              padding: "12px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "8px",
+            }}
+            onClick={onClose}
+          >
+            {t("settings-modal.close")}
+          </MintButton>
+        </Box>
+      </MintDialogActions>
+    </MintDialog>
+  );
+};
+
+export default SettingsModal;

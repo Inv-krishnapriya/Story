@@ -1,0 +1,74 @@
+.link {
+  color: 'white';
+}
+
+.disabledLink {
+  pointer-events: none;
+}
+
+.policyTitle {
+  color: #0a1826;
+  font-size: 24px !important;
+  font-style: normal;
+  font-weight: 700 !important;
+  line-height: 150% !important; /* 36px */
+}
+
+.subHeading {
+  color: var(--ui-colors-text-high, #0a1826);
+  font-size: 18px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 150%; /* 27px */
+}
+
+.policyContent {
+  font-size: 14px !important;
+}
+
+.modal {
+  display: flex;
+  width: 786px;
+  height: 640px;
+  padding: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-m, 24px);
+}
+
+.selectPlaceholder {
+  color: rgba(10, 24, 38, 0.59) !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 150% !important;
+}
+
+.tildeSymbol {
+  font-size: 22px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+}
+
+.publishModal {
+  color: white !important;
+  display: flex;
+  width: 64px !important;
+  height: 40px !important;
+  min-width: 64px !important;
+  padding: 12px !important;
+  justify-content: center;
+  align-items: center !important;
+  gap: 8px;
+  background-color: #162987 !important;
+  border-radius: 8px !important;
+}
+
+.Button {
+  background: #162987 !important;
+  color: white !important;
+
+  &:hover {
+    background: #162987 !important;
+  }
+}

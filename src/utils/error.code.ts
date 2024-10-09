@@ -1,0 +1,8 @@
+const BackendErrorCode = {
+  AUTH_FAIL: "E300001",
+  GET_AUTH_CODES_FAIL: "E300002",
+  REFRESH_TOKEN_GENERATE_FAIL: "E300003",
+  TOKEN_VALIDATION_FAIL: "E300004",
+};
+
+export { BackendErrorCode };

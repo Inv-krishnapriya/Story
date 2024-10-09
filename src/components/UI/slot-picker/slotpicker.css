@@ -1,0 +1,5 @@
+.ds-selector {
+  background-color: rgba(16, 78, 232, 0.11) !important;
+  border-color: #162987 !important;
+  z-index: 100;
+}

@@ -1,0 +1,145 @@
+pipeline {
+
+    agent {
+        docker { 
+            image 'amazonlinux2:worknode-01'
+            args '--name Build'
+            args '--net host'
+        }
+    }
+
+    environment {
+        DEPLOY_ACCOUNT_ID = "380812766917"
+        IMAGE_NAME = "qi-frontend-customer"
+        NAME_SPACE = "qi-dev-customer-front"
+        APP_NAME = "app-qi-dev-customer-front"
+        CONFIGMAP_NAME = "configmap-qi-customer"
+        DEPLOYMENT_NAME = "deployment-qi-dev-customer-front"
+        TARGET_GROUP_BINDING_NAME = "tgb-qi-dev-customer-front"
+        TARGET_GROUP_ARN = "arn:aws:elasticloadbalancing:ap-northeast-1:380812766917:targetgroup/alb-tg-qi-front-dev-customer/8f4a20f81f264964"
+        SERVICE_NAME = "service-qi-customer-front"
+        EKS_CLUSTER_NAME = "eks-qi-front-dev"
+        S3_BUCKET       = "s3://s3-mint-dev-devops-deploy-history/qi-front-customer/eks/qi-front-customer"
+        RECORD_FILENAME = "imagestag-front-customer.txt"
+        ROLE_ARN          = "arn:aws:iam::${DEPLOY_ACCOUNT_ID}:role/RL-CROSS-WORKLOAD"
+        ROLE_SESSION_NAME = "jenkins-config-session"
+        CREDENTIALS = credentials('${JENKINS_CREDENTIALS}')
+        SECURITY_GROUP_ID = "sg-086f0053ef784b907"
+    }
+
+    stages{
+        //（0）AssumeRole Token Create
+        stage('AssumeRole Token Create') {
+            steps {
+                script {
+                    ASSUME_ROLE_RESPONSE=sh(script:'aws sts assume-role --role-arn ${ROLE_ARN} --role-session-name ${ROLE_SESSION_NAME} > ./role.txt', returnStdout:true)
+                    access_id=sh(script:'cat ./role.txt | jq -r ".Credentials.AccessKeyId"  | tr -d "\\r\\n"', returnStdout:true)
+                    access_key=sh(script:'cat ./role.txt | jq -r ".Credentials.SecretAccessKey" | tr -d "\\r\\n"', returnStdout:true)
+                    session_token=sh(script:'cat ./role.txt | jq -r ".Credentials.SessionToken" | tr -d "\\r\\n"', returnStdout:true)
+                }
+            } 
+        }
+        //（1）Connection to kubernetes */
+        stage("Connection to kubernetes") {
+            environment { 
+                AWS_ACCESS_KEY_ID = "${access_id}"
+                AWS_SECRET_ACCESS_KEY = "${access_key}"
+                AWS_SESSION_TOKEN = "${session_token}"
+            }
+            steps{
+                echo "==========  Connection to kubernetes Start  =========="
+                sh "aws eks update-kubeconfig --region ap-northeast-1 --name ${EKS_CLUSTER_NAME}"
+                echo "==========  Connection to kubernetes End  =========="
+            }
+        }
+        //（2）Download Image TAG
+        stage("Download Image TAG ") {
+            steps{
+                echo "==========  Download Image TAG Start  =========="
+                sh "aws s3 cp ${S3_BUCKET}/${RECORD_FILENAME} ./${RECORD_FILENAME}"
+                script {
+                    if ( env.IMAGE_TAG_MANUAL == '' ) {
+                        env.IMAGE_TAG = sh (script: 'tail -n 1 ./${RECORD_FILENAME}',returnStdout: true).trim()
+                    }
+                    else{
+                        env.IMAGE_TAG = env.IMAGE_TAG_MANUAL
+                    }
+                }
+                sh "echo $IMAGE_TAG"
+                echo "==========  Download Image TAG End  =========="
+            }
+        }
+        //（3）Deploy kubernetes namespaces
+        stage("Deploy kubernetes namespaces") {
+            environment { 
+                AWS_ACCESS_KEY_ID = "${access_id}"
+                AWS_SECRET_ACCESS_KEY = "${access_key}"
+                AWS_SESSION_TOKEN = "${session_token}"
+            }
+            steps {
+                echo "==========  Deploy kubernetes namespaces Start  =========="
+                sh " envsubst < ./CICD/develop/qi_customer_front_namespaces.yaml | /root/bin/kubectl apply -f - "
+                sh "echo `pwd`"
+                echo "==========  Deploy kubernetes namespaces END  =========="
+            }
+        }
+        //（4）Deploy kubernetes deployment
+        stage("Deploy kubernetes deployment") {
+            environment { 
+                AWS_ACCESS_KEY_ID = "${access_id}"
+                AWS_SECRET_ACCESS_KEY = "${access_key}"
+                AWS_SESSION_TOKEN = "${session_token}"
+            }
+            steps {
+                echo "==========  Deploy kubernetes deployment Start  =========="
+                sh " envsubst < ./CICD/develop/qi_customer_front_deploy.yaml | /root/bin/kubectl apply -f - "
+                echo "==========  Deploy kubernetes deployment END  =========="
+            }
+        }
+        //（5）Deploy kubernetes Service
+        stage("Deploy kubernetes Service") {
+            environment { 
+                AWS_ACCESS_KEY_ID = "${access_id}"
+                AWS_SECRET_ACCESS_KEY = "${access_key}"
+                AWS_SESSION_TOKEN = "${session_token}"
+            }
+            steps {
+                echo "==========  Deploy kubernetes Service Start  =========="
+                sh " envsubst < ./CICD/develop/qi_customer_front_service.yaml | /root/bin/kubectl apply -f - "
+                echo "==========  Deploy kubernetes Service END  =========="
+            }
+        }
+        //（6）Clean Workspace
+        stage("Clear out All files") {
+            steps{
+                echo "==========  Build sucess and clear out file Start  =========="
+                echo "Deploy is successfully! Version is ${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "rm -rf *"
+                echo "==========  Build sucess and clear out file End  =========="
+            }
+        }
+    }
+
+    post{
+        always {
+            script{
+                println("always")
+            }
+        }
+        success {
+            script{
+                currentBuild.description += "\n デプロイ完了しました。"
+            }
+        }
+        failure{
+            script{
+                currentBuild.description += "\n デプロイ失敗しました。"
+            }
+        }
+        aborted {
+            script{
+                currentBuild.description += "\n デプロイキャンセルしました。"
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+.redirectLinks {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+
+    a {
+        text-decoration: none;
+        color: rgb(39, 176, 255);
+    }
+
+    a:hover {
+        text-decoration: underline;
+        text-decoration-color: aqua;
+    }
+}
+
+.Button {
+    background: #162987 !important;
+    color: white !important;
+  
+    &:hover {
+      background: #162987 !important;
+    }
+  }
+  

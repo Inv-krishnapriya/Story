@@ -1,0 +1,19 @@
+{
+  "translation": {
+    "login": {
+      "button": "login"
+    },
+    "monitor": {
+      "appName": "Quick Interview"
+    },
+
+    "pages": {
+      "client-login": {
+        "header": "Interview Zero",
+        "footer": {
+          "title": "Macromill, Inc. All Rights Reserved."
+        }
+      }
+    }
+  }
+}

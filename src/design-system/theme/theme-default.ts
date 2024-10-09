@@ -1,0 +1,240 @@
+import { ColorPallet } from "./color/color-pallet";
+import { MintTheme } from "./theme";
+import { Spacing } from "./spacing/spacing";
+import { Typography } from "./typography/typography";
+import { CornerRadius } from "./corner-radius/corner-radius";
+
+export const MintThemeDefault: MintTheme = {
+  appBarHeight: 56,
+  drawerWidth: 240,
+  typography: Typography,
+  color: {
+    pallet: ColorPallet,
+    background: {
+      uiBackground: ColorPallet.blue50,
+      containerBg: {
+        layer1: ColorPallet.whiteCommon,
+        layer2: ColorPallet.gray50,
+        layer3: ColorPallet.whiteCommon,
+        layer4: ColorPallet.gray50,
+        modal: ColorPallet.whiteCommon,
+        scrim: ColorPallet.blackAlpha300,
+      },
+    },
+    border: {
+      high: ColorPallet.grayAlpha700,
+      medium: ColorPallet.grayAlpha300,
+      mediumHover: ColorPallet.grayAlpha700,
+      low: ColorPallet.grayAlpha100,
+      lowOpacity: ColorPallet.gray700,
+      disabled: ColorPallet.grayAlpha200,
+      highInverse: ColorPallet.whiteCommon,
+      link: ColorPallet.aquaAlpha300,
+      linkHover: ColorPallet.aquaBrilliant600,
+      accent: ColorPallet.blue500,
+    },
+    text: {
+      high: ColorPallet.grayCommon,
+      medium: ColorPallet.grayAlpha700,
+      low: ColorPallet.grayAlpha600,
+      disabled: ColorPallet.grayAlpha400,
+      highInverse: ColorPallet.whiteCommon,
+      fixedWhite: ColorPallet.whiteCommon,
+      fixedGray: ColorPallet.grayCommon,
+      link: ColorPallet.aquaBrilliant600,
+      accent: ColorPallet.ultramarine600,
+    },
+    surfaceAccent: {
+      primary: {
+        dark: ColorPallet.blue700,
+        primary: ColorPallet.ultramarine600,
+        hover: ColorPallet.ultramarine700,
+        pressed: ColorPallet.ultramarine700,
+        bright: ColorPallet.blue100,
+        brightHover: ColorPallet.blue200,
+        brightPressed: ColorPallet.blue300,
+        areaHover: ColorPallet.blueAlpha100,
+        areaPressed: ColorPallet.blueAlpha200,
+        areaSelected: ColorPallet.blueAlpha100,
+        disabled: ColorPallet.blueAlpha200,
+      },
+      primaryNavigation: {
+        primary: ColorPallet.ultramarine800,
+        hover: ColorPallet.ultramarine900,
+        pressed: ColorPallet.ultramarine900,
+        bright: ColorPallet.ultramarine900,
+      },
+      secondary: {
+        secondary: ColorPallet.turquoiseBrilliant400,
+        hover: ColorPallet.turquoiseBrilliant500,
+        pressed: ColorPallet.turquoise500,
+        bright: ColorPallet.turquoise100,
+        brightHover: ColorPallet.turquoise200,
+        brightPressed: ColorPallet.turquoise300,
+      },
+    },
+    surfaceGray: {
+      high: {
+        high: ColorPallet.whiteCommon,
+        hover: ColorPallet.gray50,
+        pressed: ColorPallet.gray100,
+      },
+      medium: {
+        medium: ColorPallet.grayAlpha200,
+        hover: ColorPallet.grayAlpha300,
+        pressed: ColorPallet.grayAlpha400,
+      },
+      low: {
+        low: ColorPallet.grayAlpha400,
+        hover: ColorPallet.grayAlpha600,
+        pressed: ColorPallet.grayAlpha700,
+      },
+      componentBg: {
+        bg: ColorPallet.whiteCommon,
+        hover: ColorPallet.gray50,
+        pressed: ColorPallet.gray100,
+        selected: ColorPallet.grayAlpha700,
+      },
+      area: {
+        hover: ColorPallet.grayAlpha50,
+        pressed: ColorPallet.grayAlpha100,
+      },
+      disabled: {
+        disabled: ColorPallet.gray300,
+        alpha: ColorPallet.grayAlpha100,
+        white: ColorPallet.white800,
+      },
+      table: {
+        tableHead: ColorPallet.grayAlpha50,
+        tableHeadHover: ColorPallet.grayAlpha100,
+        tableHeadSelected: ColorPallet.blueAlpha200,
+        questionnaireTableLow: ColorPallet.blueGrayAlpha50,
+        questionnaireTableHigh: ColorPallet.blueGrayAlpha100,
+        questionnaireTableHover: ColorPallet.blue100,
+      },
+      white: {
+        fixed: ColorPallet.whiteCommon,
+      },
+    },
+    system: {
+      error: {
+        error: ColorPallet.redBrilliant500,
+        hover: ColorPallet.redBrilliant600,
+        pressed: ColorPallet.red600,
+        bright: ColorPallet.red50,
+        brightHover: ColorPallet.red100,
+        brightPressed: ColorPallet.red200,
+      },
+      success: {
+        success: ColorPallet.tealBrilliant600,
+        bright: ColorPallet.teal50,
+      },
+      warning: {
+        warning: ColorPallet.orangeBrilliant600,
+        bright: ColorPallet.yellow50,
+      },
+      info: {
+        info: ColorPallet.ultramarine500,
+        bright: ColorPallet.ultramarine50,
+      },
+      focus: {
+        focus: ColorPallet.teal200,
+        bright: ColorPallet.tealAlpha300,
+      },
+    },
+    object: {
+      high: ColorPallet.gray900,
+      medium: ColorPallet.grayAlpha700,
+      low: ColorPallet.grayAlpha500,
+      disabled: ColorPallet.grayAlpha400,
+      highInverse: ColorPallet.whiteCommon,
+      fixedWhite: ColorPallet.whiteCommon,
+      fixedGray: ColorPallet.grayCommon,
+      link: ColorPallet.aquaBrilliant600,
+      accent: ColorPallet.blue500,
+      accentInverse: ColorPallet.blue50,
+    },
+    extendedColors: {
+      red: {
+        ex1: ColorPallet.redBrilliant300,
+        ex2: ColorPallet.red300,
+        ex3: ColorPallet.red500,
+        ex4: ColorPallet.red600,
+      },
+      pink: {
+        ex1: ColorPallet.pinkBrilliant300,
+        ex2: ColorPallet.pink300,
+        ex3: ColorPallet.pink500,
+        ex4: ColorPallet.pink600,
+      },
+      purple: {
+        ex1: ColorPallet.purpleBrilliant300,
+        ex2: ColorPallet.purple300,
+        ex3: ColorPallet.purple500,
+        ex4: ColorPallet.purple400,
+      },
+      ultramarine: {
+        ex1: ColorPallet.ultramarineBrilliant300,
+        ex2: ColorPallet.ultramarineBrilliant400,
+        ex3: ColorPallet.ultramarine500,
+        ex4: ColorPallet.ultramarine600,
+      },
+      blue: {
+        ex1: ColorPallet.blueBrilliant300,
+        ex2: ColorPallet.blueBrilliant400,
+        ex3: ColorPallet.blue500,
+        ex4: ColorPallet.blue600,
+      },
+      aqua: {
+        ex1: ColorPallet.aquaBrilliant300,
+        ex2: ColorPallet.aqua300,
+        ex3: ColorPallet.aqua500,
+        ex4: ColorPallet.aqua600,
+      },
+      turquoise: {
+        ex1: ColorPallet.turquoiseBrilliant300,
+        ex2: ColorPallet.turquoise300,
+        ex3: ColorPallet.turquoise500,
+        ex4: ColorPallet.turquoise600,
+      },
+      teal: {
+        ex1: ColorPallet.tealBrilliant300,
+        ex2: ColorPallet.teal300,
+        ex3: ColorPallet.teal500,
+        ex4: ColorPallet.teal600,
+      },
+      green: {
+        ex1: ColorPallet.greenBrilliant300,
+        ex2: ColorPallet.green300,
+        ex3: ColorPallet.green500,
+        ex4: ColorPallet.green600,
+      },
+      lime: {
+        ex1: ColorPallet.limeBrilliant300,
+        ex2: ColorPallet.lime300,
+        ex3: ColorPallet.lime500,
+        ex4: ColorPallet.lime600,
+      },
+      yellow: {
+        ex1: ColorPallet.yellowBrilliant300,
+        ex2: ColorPallet.yellow300,
+        ex3: ColorPallet.yellow500,
+        ex4: ColorPallet.yellow600,
+      },
+      orange: {
+        ex1: ColorPallet.orangeBrilliant300,
+        ex2: ColorPallet.orange300,
+        ex3: ColorPallet.orange500,
+        ex4: ColorPallet.orange600,
+      },
+      gray: {
+        ex1: ColorPallet.gray100,
+        ex2: ColorPallet.gray500,
+        ex3: ColorPallet.gray700,
+        ex4: ColorPallet.gray800,
+      },
+    },
+  },
+  spacing: Spacing,
+  cornerRadius: CornerRadius,
+};

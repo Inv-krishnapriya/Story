@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: ${NAME_SPACE}
+  name: ${DEPLOYMENT_NAME}
+  labels:
+    tags.datadoghq.com/env: "develop"
+    tags.datadoghq.com/service: "svc-qi-frontend-customer"
+    tags.datadoghq.com/version: "${BUILD_NUMBER}"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ${APP_NAME}
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ${APP_NAME}
+        tags.datadoghq.com/env: "develop"
+        tags.datadoghq.com/service: "svc-qi-frontend-customer"
+        tags.datadoghq.com/version: "${BUILD_NUMBER}"
+    spec:
+      containers:
+      - image: "${DEPLOY_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+        imagePullPolicy: Always
+        name: ${APP_NAME}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DD_TRACE_AGENT_URL
+          value: 'unix:///var/run/datadog/apm.socket'
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        volumeMounts:
+        - name: apmsocketpath
+          mountPath: /var/run/datadog
+      volumes:
+      - hostPath:
+          path: /var/run/datadog/
+        name: apmsocketpath

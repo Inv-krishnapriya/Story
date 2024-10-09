@@ -1,0 +1,131 @@
+pipeline {
+
+    agent {
+        docker {
+            image 'amazonlinux2:worknode-01'
+            args '--name Build'
+            args '--net host'
+        }
+    }
+
+    environment {
+        IMAGE_NAME      = "qi-frontend-customer"
+        GITHUB_URL      = "https://github.com/macromill-mint/qi-frontend-customer.git"
+        GITHUB_BRANCH   = "${TAG_OR_BRANCH}"
+        S3_BUCKET       = "s3://s3-mint-prod-devops-deploy-history/qi-front"
+        RECORD_FILENAME = "images-tag-customer.txt"
+        CREDENTIALS = credentials('${JENKINS_CREDENTIALS}')
+        ROLE_ARN          = "arn:aws:iam::${WORKLOAD_ACCOUNT_ID}:role/RL-CROSS-WORKLOAD"
+        ROLE_SESSION_NAME = "jenkins-config-session"
+    }
+
+    stages{
+        //（0）Clean Workspace
+        stage("Clear out All files") {
+            steps{
+                echo "==========  Clear out file Start  =========="
+                sh "rm -rf *"
+                echo "==========  Clear out file End  =========="
+            }
+        }
+         //（1）AssumeRole Token Create
+        stage('AssumeRole Token Create') {
+            steps {
+                script {
+                    ASSUME_ROLE_RESPONSE=sh(script:'aws sts assume-role --role-arn ${ROLE_ARN} --role-session-name ${ROLE_SESSION_NAME} > ./role.txt', returnStdout:true)
+                    access_id=sh(script:'cat ./role.txt | jq -r ".Credentials.AccessKeyId"  | tr -d "\\r\\n"', returnStdout:true)
+                    access_key=sh(script:'cat ./role.txt | jq -r ".Credentials.SecretAccessKey" | tr -d "\\r\\n"', returnStdout:true)
+                    session_token=sh(script:'cat ./role.txt | jq -r ".Credentials.SessionToken" | tr -d "\\r\\n"', returnStdout:true)
+                }
+            } 
+        }
+        //（2）Checkout code from GitHub
+        stage("Checkout code from GitHub") {
+            steps {
+                script{
+                    echo "==========  Checkout code from GitHub Start  =========="
+                    checkout(
+                            scm: [$class: "GitSCM", userRemoteConfigs: [[url: "${GITHUB_URL}", credentialsId: "${JENKINS_CREDENTIALS}"]], branches: [[name: "${GITHUB_BRANCH}"]]],
+                            poll: false
+                        )
+                    echo "==========  Checkout code from GitHub End    =========="
+                }
+            }
+        }
+        //（3）Build Images
+        stage("Build Images") {
+            steps {
+                echo "==========  build images Start  =========="
+                script {
+                    if ( env.IMAGE_TAG_MANUAL == '' ) {
+                        IMAGE_TAG = sh (script: 'date +%Y%m%d%H%M%S',returnStdout: true).trim()
+                    }
+                    else{
+                        IMAGE_TAG = env.IMAGE_TAG_MANUAL
+                    }
+                }
+                sh  "rm -vf .env*"
+                 withCredentials([file(credentialsId: 'QI-Prod-Frontend-Customer', variable: 'envfile')])
+                {
+                    sh 'cat ${envfile} > .env.production'
+                }
+                sh "docker build -t ${WORKLOAD_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG} ."
+                echo "==========  build images End    =========="
+            }
+        }
+        //（4）Push Images
+        stage("Push Images") {
+            environment { 
+                AWS_ACCESS_KEY_ID = "${access_id}"
+                AWS_SECRET_ACCESS_KEY = "${access_key}"
+                AWS_SESSION_TOKEN = "${session_token}"
+            }
+            steps {
+                echo "==========  push images Start  =========="
+                sh "aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin ${WORKLOAD_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com"
+                sh "docker push ${WORKLOAD_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+                echo "==========  push images End    =========="
+            }
+        }
+        //（5）Upload Image TAG
+        stage("Upload Image TAG") {
+            steps{
+                echo "==========  Upload Image TAG Start  =========="
+                sh "echo ${IMAGE_TAG} > ${RECORD_FILENAME}"
+                sh "aws s3 cp ./${RECORD_FILENAME} ${S3_BUCKET}/${RECORD_FILENAME}"
+                echo "==========  Upload Image TAG End  =========="
+            }
+        }
+        //（6）Clean Workspace
+        stage("Clear out build DIR") {
+            steps{
+                echo "==========  Build sucess and clear out file Start  =========="
+                sh "docker rmi ${WORKLOAD_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "rm -rf *"
+                echo "==========  Build sucess and clear out file End  =========="
+            }
+        }
+    }
+    post{
+        always {
+            script{
+                println("always")
+            }
+        }
+        success {
+            script{
+                currentBuild.description += "\n デプロイ完了しました。"
+            }
+        }
+        failure{
+            script{
+                currentBuild.description += "\n デプロイ失敗しました。"
+            }
+        }
+        aborted {
+            script{
+                currentBuild.description += "\n デプロイキャンセルしました。"
+            }
+        }
+    }
+}
