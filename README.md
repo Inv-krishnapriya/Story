@@ -11,66 +11,11 @@
 
 <p align="center">Build bulletproof UI components faster</p>
 
-<br/>
+## Project Description
 
-<p align="center">
-  <a href="https://circleci.com/gh/storybookjs/storybook">
-    <img src="https://circleci.com/gh/storybookjs/storybook.svg?style=shield" alt="Build Status on CircleCI" />
-  </a>
-  <a href="https://codecov.io/gh/storybookjs/storybook">
-    <img src="https://codecov.io/gh/storybookjs/storybook/branch/main/graph/badge.svg" alt="codecov" />
-  </a>
-  <a href="https://github.com/storybookjs/storybook/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/storybookjs/storybook.svg" alt="License" />
-  </a>
-  <br/>
-  <a href="https://discord.gg/storybook">
-    <img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" />
-  </a>
-  <a href="https://storybook.js.org/community/">
-    <img src="https://img.shields.io/badge/community-join-4BC424.svg" alt="Storybook Community" />
-  </a>
-  <a href="#backers">
-    <img src="https://opencollective.com/storybook/backers/badge.svg" alt="Backers on Open Collective" />
-  </a>
-  <a href="#sponsors">
-    <img src="https://opencollective.com/storybook/tiers/sponsors/badge.svg" alt="Sponsors on Open Collective" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=storybookjs">
-    <img src="https://img.shields.io/twitter/follow/storybookjs?color=blue&logo=twitter" alt="Official Twitter Handle" />
-  </a>
-  <a href="https://api.securityscorecards.dev/projects/github.com/storybookjs/storybook">
-    <img src="https://api.securityscorecards.dev/projects/github.com/storybookjs/storybook/badge" alt="OpenSSF Scorecard"/>
-  </a>
-</p>
+This project utilizes **Storybook** to develop and showcase UI components in isolation. It helps streamline the design process, allowing developers to create and test components independently before integrating them into the main application. With Storybook, you can build robust, reusable components that enhance the overall user experience.
 
-<p align="center">
-Storybook is a frontend workshop for building UI components and pages in isolation. Thousands of teams use it for UI development, testing, and documentation. Find out more at https://storybook.js.org!
-</p>
 
-<center>
-  <img src="https://raw.githubusercontent.com/storybookjs/storybook/main/media/storybook-intro.gif" width="100%" />
-</center>
-
-<p align="center">
-  View README for:<br/>
-  <a href="https://github.com/storybookjs/storybook/blob/main/README.md" title="latest"><img alt="latest" src="https://img.shields.io/npm/v/@storybook/react/latest?style=for-the-badge&logo=storybook&logoColor=ffffff&color=66BF3C" /></a>
-  <a href="https://github.com/storybookjs/storybook/blob/next/README.md" title="next"><img alt="next" src="https://img.shields.io/npm/v/@storybook/react/next?style=for-the-badge&logo=storybook&logoColor=ffffff&color=1EA7FD" /></a>
-</p>
-
-## Table of contents
-
-- 🚀 [Getting Started](#getting-started)
-- 📒 [Projects](#projects)
-  - 🛠 [Supported Frameworks & Examples](#supported-frameworks)
-  - 🔗[Addons](#addons)
-- 🏅 [Badges & Presentation materials](#badges--presentation-materials)
-- 👥 [Community](#community)
-- 👏 [Contributing](#contributing)
-  - 👨‍💻 [Development scripts](#development-scripts)
-  - 💵 [Backers](#backers)
-  - 💸 [Sponsors](#sponsors)
-- :memo: [License](#license)
 
 ## Getting Started
 
@@ -94,7 +39,14 @@ Documentation can be found on [Storybook's docs site](https://storybook.js.org/d
     ```bash
     npx storybook@latest upgrade
 
-
-## Run storybook
+2. **run**:
     ```bash
     npm run storybook
+
+Open [http://localhost:6006](http://localhost:6006) with your browser to see the result.
+
+
+
+
+
+  
